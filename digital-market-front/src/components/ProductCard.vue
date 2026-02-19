@@ -1,10 +1,19 @@
 <script setup>
-// Definimos las props que recibe este componente
-defineProps({
+import { computed } from "vue";
+import { useCartStore } from "../stores/cart";
+
+const props = defineProps({
   product: {
     type: Object,
     required: true,
   },
+});
+
+const cartStore = useCartStore();
+
+// Evaluamos si este producto ya está en el carrito
+const isInCart = computed(() => {
+  return cartStore.items.some((item) => item.id === props.product.id);
 });
 </script>
 
@@ -38,9 +47,16 @@ defineProps({
         </span>
 
         <button
-          class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          @click="cartStore.addToCart(product)"
+          :disabled="isInCart"
+          :class="[
+            'px-4 py-2 rounded-md text-sm font-medium transition-colors',
+            isInCart
+              ? 'bg-emerald-100 text-emerald-700 cursor-not-allowed'
+              : 'bg-indigo-600 hover:bg-indigo-700 text-white',
+          ]"
         >
-          Ver Detalles
+          {{ isInCart ? "En el carrito" : "Añadir" }}
         </button>
       </div>
     </div>

@@ -2,10 +2,12 @@
 import { useRouter } from "vue-router";
 import { ShoppingBag } from "lucide-vue-next";
 import { useAuthStore } from "./stores/auth";
+import { useCartStore } from "./stores/cart";
 import { toast } from "vue3-toastify";
 
 const router = useRouter();
 const authStore = useAuthStore();
+const cartStore = useCartStore();
 
 // Manejamos el cierre de sesión
 const handleLogout = async () => {
@@ -66,16 +68,18 @@ const handleLogout = async () => {
             </button>
           </template>
 
-          <button
+          <router-link
+            to="/cart"
             class="relative p-2 text-slate-600 hover:text-indigo-600 transition-colors ml-2 border-l border-gray-200 pl-4"
           >
             <ShoppingBag class="w-6 h-6" />
             <span
+              v-if="cartStore.totalItems > 0"
               class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-500 rounded-full"
             >
-              0
+              {{ cartStore.totalItems }}
             </span>
-          </button>
+          </router-link>
         </div>
       </div>
     </nav>
