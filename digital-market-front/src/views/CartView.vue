@@ -1,8 +1,48 @@
 <script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { useCartStore } from "../stores/cart";
+import { useAuthStore } from "../stores/auth";
 import { Trash2 } from "lucide-vue-next";
+import api from "../lib/axios";
+import { toast } from "vue3-toastify";
 
 const cartStore = useCartStore();
+const authStore = useAuthStore();
+const router = useRouter();
+const isProcessing = ref(false);
+
+// Función que se comunica con Laravel
+const handleCheckout = async () => {
+  // Comprobamos si está logueado
+  if (!authStore.isAuthenticated) {
+    toast.warning("Debes iniciar sesión para procesar el pago.");
+    router.push({ name: "login" });
+    return;
+  }
+
+  isProcessing.value = true;
+
+  try {
+    // Extraemos SOLO los IDs de los productos
+    const productIds = cartStore.items.map((item) => item.id);
+
+    // Hacemos la petición POST a nuestra API protegida
+    const response = await api.post("/checkout", {
+      product_ids: productIds,
+    });
+
+    // Si Laravel nos devuelve la URL de Stripe, redirigimos al usuario
+    if (response.data.url) {
+      window.location.href = response.data.url;
+    }
+  } catch (error) {
+    console.error("Error de checkout:", error);
+    toast.error("Error al conectar con la pasarela de pago.");
+  } finally {
+    isProcessing.value = false;
+  }
+};
 </script>
 
 <template>
@@ -64,9 +104,19 @@ const cartStore = useCartStore();
         </div>
 
         <button
-          class="w-full sm:w-auto bg-slate-900 text-white px-8 py-3 rounded-md font-medium hover:bg-slate-800 transition-colors"
+          @click="handleCheckout"
+          :disabled="isProcessing"
+          class="w-full sm:w-auto bg-slate-900 text-white px-8 py-3 rounded-md font-medium hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
         >
-          Proceder al pago seguro
+          <span
+            v-if="isProcessing"
+            class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"
+          ></span>
+          {{
+            isProcessing
+              ? "Redirigiendo a Stripe..."
+              : "Proceder al pago seguro"
+          }}
         </button>
       </div>
     </div>

@@ -18,6 +18,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::post('/checkout', [CheckoutController::class, 'createSession']);
+    Route::post('/checkout/verify', [CheckoutController::class, 'verifySession']);
 
     Route::get('/user', function (Request $request) {
         return $request->user();

@@ -2,55 +2,73 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import api from "../lib/axios";
 
+// Funciones auxiliares para evitar que "undefined" rompa la app
+const getStoredUser = () => {
+  try {
+    const item = localStorage.getItem("auth_user");
+    return item && item !== "undefined" ? JSON.parse(item) : null;
+  } catch (error) {
+    return null;
+  }
+};
+
+const getStoredToken = () => {
+  const item = localStorage.getItem("auth_token");
+  return item && item !== "undefined" ? item : null;
+};
+
 export const useAuthStore = defineStore("auth", () => {
   // estado
-  const user = ref(null);
-  const token = ref(localStorage.getItem("auth_token") || null);
+  const user = ref(getStoredUser());
+  const token = ref(getStoredToken());
 
   // getters
   const isAuthenticated = computed(() => !!token.value);
 
-  // mutaciones privadas
-  const setAuth = (userData, authToken) => {
-    user.value = userData;
-    token.value = authToken;
-    localStorage.setItem("auth_token", authToken);
-  };
-
-  const clearAuth = () => {
-    user.value = null;
-    token.value = null;
-    localStorage.removeItem("auth_token");
-  };
-
-  // acciones públicas
+  // acciones
   const login = async (credentials) => {
     const response = await api.post("/login", credentials);
-    setAuth(response.data.user, response.data.access_token);
+
+    const actualToken = response.data.token || response.data.access_token;
+
+    token.value = actualToken;
+    user.value = response.data.user;
+
+    localStorage.setItem("auth_token", actualToken);
+    localStorage.setItem("auth_user", JSON.stringify(user.value));
+
+    api.defaults.headers.common["Authorization"] = `Bearer ${actualToken}`;
   };
 
-  const register = async (userData) => {
-    const response = await api.post("/register", userData);
-    setAuth(response.data.user, response.data.access_token);
+  const register = async (data) => {
+    const response = await api.post("/register", data);
+
+    const actualToken = response.data.token || response.data.access_token;
+
+    token.value = actualToken;
+    user.value = response.data.user;
+
+    localStorage.setItem("auth_token", actualToken);
+    localStorage.setItem("auth_user", JSON.stringify(user.value));
+
+    api.defaults.headers.common["Authorization"] = `Bearer ${actualToken}`;
   };
 
   const logout = async () => {
     try {
-      await api.post("/logout");
+      if (token.value) {
+        await api.post("/logout");
+      }
     } catch (error) {
-      console.error("error al cerrar sesión en el servidor", error);
+      console.error("Error al cerrar sesión", error);
     } finally {
-      // siempre limpiamos el frontend, aunque el servidor falle
-      clearAuth();
+      token.value = null;
+      user.value = null;
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("auth_user");
+      delete api.defaults.headers.common["Authorization"];
     }
   };
 
-  return {
-    user,
-    token,
-    isAuthenticated,
-    login,
-    register,
-    logout,
-  };
+  return { user, token, isAuthenticated, login, register, logout };
 });
