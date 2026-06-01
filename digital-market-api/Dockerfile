@@ -22,8 +22,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # 5. Copiamos todo tu código de Laravel al contenedor
 COPY . /var/www/html
 
-# 6. Instalamos las dependencias de Laravel para producción
-RUN composer install --no-dev --optimize-autoloader
+# 6. Instalamos las dependencias de Laravel
+RUN composer install --optimize-autoloader
 
 # 7. Damos permisos a las carpetas que Laravel necesita modificar
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
