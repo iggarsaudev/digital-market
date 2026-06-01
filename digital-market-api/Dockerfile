@@ -28,6 +28,9 @@ RUN composer install --no-dev --optimize-autoloader
 # 7. Damos permisos a las carpetas que Laravel necesita modificar
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# NUEVO: Creamos el acceso directo para que las imágenes sean públicas
+RUN php artisan storage:link
+
 # 8. Exponemos el puerto 80 para que Render pueda conectar
 EXPOSE 80
 
