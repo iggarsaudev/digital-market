@@ -2,6 +2,8 @@
 
 DigitalMarket es una plataforma Full-Stack de comercio electrónico diseñada para la venta y distribución automatizada de productos digitales (cursos, e-books, recursos). Construida con una arquitectura desacoplada (API RESTful + SPA), integra procesamiento de pagos reales y descargas seguras protegidas por autenticación.
 
+🔗 **Demo en vivo:** [https://iggarsaudev-career-hub.vercel.app/](https://iggarsaudev-digital-market.vercel.app/)
+
 ## 🚀 Características Principales
 
 * **Autenticación SPA Segura:** Sistema de registro y login utilizando Laravel Sanctum y gestión de estado reactivo con Pinia.
@@ -45,6 +47,8 @@ php artisan migrate
 php artisan storage:link
 php artisan serve
 ```
+
+Nota: El backend está desplegado en la capa gratuita de Render (discos efímeros). Las imágenes subidas manualmente desde el panel de control pueden desaparecer tras periodos de inactividad del servidor, pero los datos de la base de datos PostgreSQL permanecen intactos
 
 ### 2. Frontend (SPA)
 
