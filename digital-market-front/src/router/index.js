@@ -34,6 +34,11 @@ const router = createRouter({
       name: "dashboard",
       component: () => import("../views/DashboardView.vue"),
     },
+    {
+      path: "/admin/products/create",
+      name: "create",
+      component: () => import("../views/AdminProductCreate.vue"),
+    },
   ],
 });
 

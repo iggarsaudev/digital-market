@@ -26,6 +26,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/download/{productId}', [DownloadController::class, 'download']);
 
+    Route::post('/products', [ProductController::class, 'store']);
+
     Route::get('/user', function (Request $request) {
         return $request->user();
     });

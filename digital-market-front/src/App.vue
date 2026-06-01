@@ -67,6 +67,12 @@ const handleLogout = async () => {
             >
               Mis Compras
             </router-link>
+            <router-link
+              to="/admin/products/create"
+              class="text-sm font-medium text-emerald-600 hover:text-emerald-800 transition-colors px-3 py-1 bg-emerald-50 rounded-md hover:bg-emerald-100 hidden sm:block"
+            >
+              + Nuevo Producto
+            </router-link>
             <button
               @click="handleLogout"
               class="text-sm font-medium text-red-500 hover:text-red-700 transition-colors"
