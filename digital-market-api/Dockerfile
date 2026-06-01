@@ -31,5 +31,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # 8. Exponemos el puerto 80 para que Render pueda conectar
 EXPOSE 80
 
-# 9. COMANDO MÁGICO: Ejecutar migraciones y luego arrancar el servidor
-CMD php artisan migrate --force && apache2-foreground
+# 9. COMANDO MÁGICO: Migraciones, Seeders y arrancar servidor
+CMD php artisan migrate --force && php artisan db:seed --force && apache2-foreground
