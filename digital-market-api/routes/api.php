@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\UserOrderController;
 
 // rutas públicas (catálogo y auth)
@@ -22,6 +23,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/checkout/verify', [CheckoutController::class, 'verifySession']);
 
     Route::get('/user/orders', [UserOrderController::class, 'index']);
+
+    Route::get('/download/{productId}', [DownloadController::class, 'download']);
 
     Route::get('/user', function (Request $request) {
         return $request->user();

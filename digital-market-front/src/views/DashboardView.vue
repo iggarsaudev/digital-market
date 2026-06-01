@@ -6,6 +6,34 @@ import { Package } from "lucide-vue-next";
 const orders = ref([]);
 const isLoading = ref(true);
 
+const downloadProduct = async (productId, productName) => {
+  try {
+    // Hacemos la petición pidiendo un "blob" (archivo binario)
+    const response = await api.get(`/download/${productId}`, {
+      responseType: "blob",
+    });
+
+    // Magia de JavaScript para crear un enlace de descarga invisible y pulsarlo
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+
+    // Limpiamos el nombre para el archivo
+    const safeName = productName.toLowerCase().replace(/ /g, "_") + ".txt";
+    link.setAttribute("download", safeName);
+
+    document.body.appendChild(link);
+    link.click();
+
+    // Limpiamos la basura del DOM
+    link.parentNode.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Error al descargar:", error);
+    alert("Hubo un problema al descargar tu archivo.");
+  }
+};
+
 onMounted(async () => {
   try {
     // Axios se encarga mágicamente de enviar tu Token de seguridad
@@ -106,7 +134,8 @@ const formatDate = (dateString) => {
             </div>
 
             <button
-              class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded font-medium hover:bg-indigo-100 transition-colors text-sm"
+              @click="downloadProduct(item.product.id, item.product.name)"
+              class="bg-indigo-50 text-indigo-700 px-4 py-2 rounded font-medium hover:bg-indigo-100 transition-colors text-sm flex items-center gap-2"
             >
               Descargar Archivo
             </button>

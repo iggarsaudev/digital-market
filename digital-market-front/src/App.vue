@@ -60,6 +60,13 @@ const handleLogout = async () => {
                 authStore.user?.name || "Usuario"
               }}</strong>
             </span>
+
+            <router-link
+              to="/dashboard"
+              class="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors px-3 py-1 bg-indigo-50 rounded-md hover:bg-indigo-100 hidden sm:block"
+            >
+              Mis Compras
+            </router-link>
             <button
               @click="handleLogout"
               class="text-sm font-medium text-red-500 hover:text-red-700 transition-colors"
