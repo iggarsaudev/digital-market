@@ -34,5 +34,5 @@ RUN php artisan storage:link
 # 8. Exponemos el puerto 80 para que Render pueda conectar
 EXPOSE 80
 
-# 9. COMANDO MÁGICO: Migraciones, Seeders y arrancar servidor
-CMD php artisan migrate --force && php artisan db:seed --force && apache2-foreground
+# 9. COMANDO MÁGICO: Migraciones y arrancar servidor (SIN SEEDERS)
+CMD php artisan migrate --force && apache2-foreground
